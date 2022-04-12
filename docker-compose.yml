@@ -1,6 +1,27 @@
-version: "0.1"
+version: '3'
 services:
-  redis:
-    build: .
-    ports:
-      - "6379:6379"
+    db:
+        image: postgres:12
+        container_name: 'postgres'
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_PASSWORD=hbZkzny5xrvVH
+
+    pgbouncer:
+        image: edoburu/pgbouncer
+        container_name: 'pgbouncer'
+        environment:
+            - DB_USER=postgres
+            - DB_PASSWORD=hbZkzny5xrvVH
+            - DB_HOST=db
+            - DB_NAME=postgres
+            - POOL_MODE=session
+            - ADMIN_USERS=postgres
+        ports:
+            -   "5432:5432"
+        depends_on:
+            - db
+
+volumes:
+    pg_data:
